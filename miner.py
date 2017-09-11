@@ -95,12 +95,12 @@ def GetPanelInfo():
   gJsonSite = commandOutput[1]
   gJsonSite = gJsonSite+"/?json=yes"
 
-  commandOutput = commands.getstatusoutput("\grep hostname /var/run/ethos/stats.file")
+  commandOutput = commands.getstatusoutput("cat /etc/hostname")
   if (commandOutput[0] != 0):
-    DumpActivity("/var/run/ethos/stats.file is not avaible")
+    DumpActivity("can't read hostname from /etc/hostname")
     return 0
 
-  gRigName = commandOutput[1][9:]
+  gRigName = commandOutput[1]
 
   return 1
 
@@ -113,10 +113,11 @@ DumpActivity("Rig name: " + gRigName + ", Json: " + gJsonSite)
 
 while 1:
   # wait for 4 min
-  time.sleep(240)
+  time.sleep(15)
 
   # read site content
   try:
+    print("fetch panel stats")
     url = urlopen(gJsonSite).read()
   except:
     DumpActivity("invalid url")
@@ -138,7 +139,7 @@ while 1:
   except:
     DumpActivity("invalid rig name")
     continue
-
+  print("...")
   if (str(gDebugMode) == "1"):
     DumpActivity("<" + status + "> Gpus: " + str(numRunningGpus) + "/" + str(numGpus) + " - " + str(hashRate))
 
